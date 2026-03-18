@@ -147,7 +147,7 @@ async function wsSave(key, v) { try { await window.storage.set(key, JSON.stringi
 async function wsLoad(key) { try { { const r = await window.storage.get(key); if (r?.value) return JSON.parse(r.value); } } catch {} return null; }
 
 async function callAPI(system, messages, maxTokens = 1200) {
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
+  const r = await fetch("/api/chat", {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: maxTokens, system, messages }),
   });
