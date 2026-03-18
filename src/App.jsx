@@ -147,12 +147,23 @@ async function wsSave(key, v) { try { await window.storage.set(key, JSON.stringi
 async function wsLoad(key) { try { { const r = await window.storage.get(key); if (r?.value) return JSON.parse(r.value); } } catch {} return null; }
 
 async function callAPI(system, messages, maxTokens = 1200) {
-  const r = await fetch("/api/chat", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: maxTokens, system, messages }),
-  });
-  const d = await r.json();
-  return d.content?.[0]?.text || "";
+  try {
+    const r = await fetch("/api/chat", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model: "claude-sonnet-4-5", max_tokens: maxTokens, system, messages }),
+    });
+    if (!r.ok) {
+      const err = await r.text();
+      console.error("API error:", r.status, err);
+      return "（連線錯誤：" + r.status + "）";
+    }
+    const d = await r.json();
+    if (d.error) { console.error("API error:", d.error); return "（API錯誤：" + (d.error.message || JSON.stringify(d.error)) + "）"; }
+    return d.content?.[0]?.text || "";
+  } catch(e) {
+    console.error("callAPI exception:", e);
+    return "（網路錯誤，請重試）";
+  }
 }
 
 function imgMsg(b64obj, text) {
