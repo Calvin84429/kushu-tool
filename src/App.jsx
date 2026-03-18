@@ -560,6 +560,7 @@ export default function App() {
   const [exportMode, setExportMode] = useState(false);
   const [weightFilter, setWeightFilter] = useState(null);
   const [pinnedIds, setPinnedIds] = useState(new Set());
+  const [loaded, setLoaded] = useState(false);
   const [trash, setTrash] = useState([]);
   const [showTrash, setShowTrash] = useState(false);
   const [trashTab, setTrashTab] = useState("visitor");
