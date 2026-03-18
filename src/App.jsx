@@ -143,8 +143,8 @@ const TRASH_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 function ls(key, fb) { try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : fb; } catch { return fb; } }
 function lsSave(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch {} }
-async function wsSave(key, v) { try { if (window.storage) await window.storage.set(key, JSON.stringify(v)); } catch {} }
-async function wsLoad(key) { try { if (window.storage) { const r = await window.storage.get(key); if (r?.value) return JSON.parse(r.value); } } catch {} return null; }
+async function wsSave(key, v) { try { await window.storage.set(key, JSON.stringify(v)); } catch {} }
+async function wsLoad(key) { try { { const r = await window.storage.get(key); if (r?.value) return JSON.parse(r.value); } } catch {} return null; }
 
 async function callAPI(system, messages, maxTokens = 1200) {
   const r = await fetch("https://api.anthropic.com/v1/messages", {
@@ -797,7 +797,7 @@ export default function App() {
     for (let C = range.s.c; C <= range.e.c; C++) {
       const addr = XLSX.utils.encode_cell({ r: 0, c: C });
       if (!ws[addr]) continue;
-      ws[addr].s = { font: { bold: true }, fill: { fgColor: { rgb: "6B21C8" } }, font: { bold: true, color: { rgb: "FFFFFF" } } };
+      ws[addr].s = { font: { bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "6B21C8" } } };
     }
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "潛在客戶");
