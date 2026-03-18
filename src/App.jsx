@@ -579,20 +579,22 @@ export default function App() {
   const lpTimer = useRef(null);
   const importRef = useRef(null);
 
-  // ── Persist ──
-  useEffect(() => { lsSave(SK + "_clients", clients); wsSave(SK + "_clients", clients); }, [clients]);
-  useEffect(() => { lsSave(SK + "_order", order); wsSave(SK + "_order", order); }, [order]);
-  useEffect(() => { lsSave(SK + "_asst", asstMsgs); wsSave(SK + "_asst", asstMsgs); }, [asstMsgs]);
-  useEffect(() => { lsSave(SK + "_sc", sc); wsSave(SK + "_sc", sc); }, [sc]);
-  useEffect(() => { try { localStorage.setItem("ksd_v7_pinned", JSON.stringify([...pinnedIds])); } catch {} }, [pinnedIds]);
+  // ── Persist to Supabase ──
+  const saveTimer = useRef({});
+  function debounceSave(key, fn, delay = 1000) {
+    clearTimeout(saveTimer.current[key]);
+    saveTimer.current[key] = setTimeout(fn, delay);
+  }
+  useEffect(() => { if (!loaded) return; Object.values(clients).forEach(c => debounceSave('c_' + c.id, () => dbUpsertClient(c))); }, [clients, loaded]);
+  useEffect(() => { if (!loaded) return; debounceSave('order', () => dbSetMeta('order', order)); }, [order, loaded]);
+  useEffect(() => { if (!loaded) return; debounceSave('sc', () => dbSetShortcuts(sc)); }, [sc, loaded]);
+  useEffect(() => { if (!loaded) return; debounceSave('pinned', () => dbSetMeta('pinnedIds', [...pinnedIds])); }, [pinnedIds, loaded]);
   useEffect(() => {
-    // Auto-purge items older than 7 days
+    if (!loaded) return;
     const now = Date.now();
     const clean = trash.filter(t => now - t.deletedAt < TRASH_TTL);
-    if (clean.length !== trash.length) setTrash(clean);
-    lsSave(SK_TRASH, clean);
-    wsSave(SK_TRASH, clean);
-  }, [trash]);
+    debounceSave('trash', () => dbSetTrash(clean));
+  }, [trash, loaded]);
   useEffect(() => {
     async function load() {
       try {
