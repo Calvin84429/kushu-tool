@@ -150,7 +150,7 @@ async function callAPI(system, messages, maxTokens = 1200) {
   try {
     const r = await fetch("/api/chat", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "claude-3-5-sonnet-20241022", max_tokens: maxTokens, system, messages }),
+      body: JSON.stringify({ model: "claude-sonnet-4-5-20250929", max_tokens: maxTokens, system, messages }),
     });
     if (!r.ok) {
       const err = await r.text();
