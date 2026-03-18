@@ -195,7 +195,16 @@ async function callAPI(system, messages, maxTokens = 1200) {
     }
     const d = await r.json();
     if (d.error) { console.error("API error:", d.error); return "（API錯誤：" + (d.error.message || JSON.stringify(d.error)) + "）"; }
-    return d.content?.[0]?.text || "";
+    const raw = d.content?.[0]?.text || "";
+    // Strip all markdown symbols
+    const clean = raw
+      .replace(/\*\*(.*?)\*\*/g, '「$1」')  // **text** → 「text」
+      .replace(/\*(.*?)\*/g, '$1')            // *text* → text
+      .replace(/^[-•]\s+/gm, '')             // remove bullet points
+      .replace(/^#+\s+/gm, '')               // remove headers
+      .replace(/_{1,2}(.*?)_{1,2}/g, '$1')   // remove underscores
+      .trim();
+    return clean;
   } catch(e) {
     console.error("callAPI exception:", e);
     return "（網路錯誤，請重試）";
