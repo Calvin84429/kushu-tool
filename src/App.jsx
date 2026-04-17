@@ -553,9 +553,9 @@ function ShortcutsPanel({ sc, setSc }) {
                             {item.text && <div style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.6, whiteSpace: "pre-wrap", maxHeight: "120px", overflowY: "auto", display: "block" }}>{item.text}</div>}
                           </div>
                           <div style={{ display: "flex", gap: 5, flexShrink: 0 }}>
-                            {item.text && <CopyText text={item.text} label="複製文字" />}
-                            <button onClick={() => { setEditItem({ catId: cat.id, itemId: item.id }); setForm({ title: item.title, text: item.text || "", images: item.images || [] }); }} style={{ padding: "4px 7px", borderRadius: 6, border: "1px solid #e5e7eb", background: "white", color: "#6b7280", fontSize: 13, cursor: "pointer", fontFamily: "inherit" }} title="編輯">✎</button>
-                            <button onClick={() => delItm(cat.id, item.id)} style={{ padding: "4px 7px", borderRadius: 6, border: "1px solid #fecaca", background: "white", color: "#ef4444", fontSize: 13, cursor: "pointer", fontFamily: "inherit" }} title="刪除">✕</button>
+                            {item.text && <CopyText text={item.text} label="複製" />}
+                            <button onClick={() => { setEditItem({ catId: cat.id, itemId: item.id }); setForm({ title: item.title, text: item.text || "", images: item.images || [] }); }} style={{ padding: "4px 6px", borderRadius: 6, border: "1px solid #e5e7eb", background: "white", color: "#9ca3af", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }} title="編輯">✎</button>
+                            <button onClick={() => delItm(cat.id, item.id)} style={{ padding: "4px 6px", borderRadius: 6, border: "1px solid #fecaca", background: "white", color: "#ef4444", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }} title="刪除">✕</button>
                           </div>
                         </div>
                         <ImgGrid images={item.images || []} onPreview={setLightbox} />
