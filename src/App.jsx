@@ -550,7 +550,7 @@ function ShortcutsPanel({ sc, setSc }) {
                         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 4 }}>{item.title}</div>
-                            {item.text && <div style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{item.text}</div>}
+                            {item.text && <div style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.6, whiteSpace: "pre-wrap", maxHeight: "120px", overflowY: "auto", display: "block" }}>{item.text}</div>}
                           </div>
                           <div style={{ display: "flex", gap: 5, flexShrink: 0 }}>
                             {item.text && <CopyText text={item.text} label="複製文字" />}
@@ -1325,7 +1325,7 @@ export default function App() {
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: 11, color: "#9ca3af", marginBottom: 2 }}>{item.catName}</div>
                             <div style={{ fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 4 }}>{item.title}</div>
-                            {item.text && <div style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{item.text}</div>}
+                            {item.text && <div style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.6, whiteSpace: "pre-wrap", maxHeight: "120px", overflowY: "auto" }}>{item.text}</div>}
                           </div>
                           {item.text && <CopyText text={item.text} label="複製" />}
                         </div>
