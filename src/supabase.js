@@ -57,8 +57,8 @@ export async function dbSetMeta(key, value) {
 // Shortcuts
 export async function dbGetShortcuts() {
   const { data, error } = await supabase.from('shortcuts').select('data').eq('id', 'main').single()
-  if (error) return { categories: [], items: {} }
-  return data?.data || { categories: [], items: {} }
+  if (error) return null
+  return data?.data ?? null
 }
 
 export async function dbSetShortcuts(sc) {

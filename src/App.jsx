@@ -672,7 +672,17 @@ export default function App() {
         if (c) setClients(c);
         if (orderVal) setOrder(orderVal);
         if (pinnedVal) setPinnedIds(new Set(pinnedVal));
-        if (s) setSc(s);
+        // Shortcuts: prefer Supabase, fall back to localStorage if Supabase is empty/missing
+        const hasSupabaseSc = s && (s.categories?.length > 0 || Object.keys(s.items || {}).length > 0);
+        if (hasSupabaseSc) {
+          setSc(s);
+        } else {
+          const backup = ls('ksd_sc_backup', null);
+          if (backup && (backup.categories?.length > 0 || Object.keys(backup.items || {}).length > 0)) {
+            setSc(backup);
+            dbSetShortcuts(backup);
+          }
+        }
         if (tr) {
           const now = Date.now();
           setTrash(tr.filter(t => now - t.deletedAt < TRASH_TTL));
