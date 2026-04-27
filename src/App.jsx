@@ -639,9 +639,19 @@ export default function App() {
     clearTimeout(saveTimer.current[key]);
     saveTimer.current[key] = setTimeout(fn, delay);
   }
-  useEffect(() => { if (!loaded) return; Object.values(clients).forEach(c => debounceSave('c_' + c.id, () => dbUpsertClient(c))); }, [clients, loaded]);
+  useEffect(() => { 
+    if (!loaded) return;
+    try { localStorage.setItem('ksd_clients_backup', JSON.stringify(clients)); } catch(e) {}
+    Object.values(clients).forEach(c => debounceSave('c_' + c.id, () => dbUpsertClient(c))); 
+  }, [clients, loaded]);
   useEffect(() => { if (!loaded) return; debounceSave('order', () => dbSetMeta('order', order)); }, [order, loaded]);
-  useEffect(() => { if (!loaded) return; debounceSave('sc', () => dbSetShortcuts(sc)); }, [sc, loaded]);
+  useEffect(() => { 
+    if (!loaded) return; 
+    // Save to localStorage as backup
+    try { localStorage.setItem('ksd_sc_backup', JSON.stringify(sc)); } catch(e) {}
+    // Save to Supabase
+    debounceSave('sc', () => dbSetShortcuts(sc)); 
+  }, [sc, loaded]);
   useEffect(() => { if (!loaded) return; debounceSave('pinned', () => dbSetMeta('pinnedIds', [...pinnedIds])); }, [pinnedIds, loaded]);
   useEffect(() => {
     if (!loaded) return;
