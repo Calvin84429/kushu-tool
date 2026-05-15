@@ -7,80 +7,83 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 // ── Supabase 保活（防止 Free tier 暫停）──
 ;(function keepAlive(){
-  const ping=()=>supabase.from('shortcuts').select('id').limit(1).catch(()=>{});
-  ping();
-  setInterval(ping, 6*60*60*1000);
-})();
+    const ping = async () => {
+          const { error } = await supabase.from('shortcuts').select('id').limit(1)
+          if (error) console.warn('keepAlive ping error:', error.message)
+    }
+    ping()
+    setInterval(ping, 6*60*60*1000)
+})()
 
 // ── DB helpers ──────────────────────────────────────────────────────────────
 
 // Clients
 export async function dbGetClients() {
-  const { data, error } = await supabase.from('clients').select('*')
-  if (error) { console.error('getClients:', error); return {} }
-  const map = {}
-  data.forEach(row => {
-    map[row.id] = {
-      id: row.id, type: row.type, name: row.name,
-      account: row.account || '', note: row.note || '',
-      weight: row.weight || 'mid', grade: row.grade || 'auto',
-      stage: row.stage || '建立信任',
-      messages: row.messages || [],
-      createdAt: row.created_at || '',
-    }
-  })
-  return map
+    const { data, error } = await supabase.from('clients').select('*')
+    if (error) { console.error('getClients:', error); return {} }
+    const map = {}
+        data.forEach(row => {
+              map[row.id] = {
+                      id: row.id, type: row.type, name: row.name,
+                      account: row.account || '', note: row.note || '',
+                      weight: row.weight || 'mid', grade: row.grade || 'auto',
+                      stage: row.stage || '建立信任',
+                      messages: row.messages || [],
+                      createdAt: row.created_at || '',
+              }
+        })
+    return map
 }
 
 export async function dbUpsertClient(client) {
-  const { error } = await supabase.from('clients').upsert({
-    id: client.id, type: client.type, name: client.name,
-    account: client.account || '', note: client.note || '',
-    weight: client.weight || 'mid', grade: client.grade || 'auto',
-    stage: client.stage || '建立信任',
-    messages: client.messages || [],
-    created_at: client.createdAt || new Date().toLocaleDateString('zh-TW'),
-  })
-  if (error) console.error('upsertClient:', error)
+    const { error } = await supabase.from('clients').upsert({
+          id: client.id, type: client.type, name: client.name,
+          account: client.account || '', note: client.note || '',
+          weight: client.weight || 'mid', grade: client.grade || 'auto',
+          stage: client.stage || '建立信任',
+          messages: client.messages || [],
+          created_at: client.createdAt || new Date().toLocaleDateString('zh-TW'),
+    })
+    if (error) console.error('upsertClient:', error)
 }
 
 export async function dbDeleteClient(id) {
-  const { error } = await supabase.from('clients').delete().eq('id', id)
-  if (error) console.error('deleteClient:', error)
+    const { error } = await supabase.from('clients').delete().eq('id', id)
+    if (error) console.error('deleteClient:', error)
 }
 
 // Client meta (order, pinnedIds)
 export async function dbGetMeta(key) {
-  const { data, error } = await supabase.from('client_meta').select('value').eq('key', key).single()
-  if (error) return null
-  return data?.value
+    const { data, error } = await supabase.from('client_meta').select('value').eq('key', key).single()
+    if (error) return null
+    return data?.value
 }
 
 export async function dbSetMeta(key, value) {
-  const { error } = await supabase.from('client_meta').upsert({ key, value })
-  if (error) console.error('setMeta:', error)
+    const { error } = await supabase.from('client_meta').upsert({ key, value })
+    if (error) console.error('setMeta:', error)
 }
 
 // Shortcuts
 export async function dbGetShortcuts() {
-  const { data, error } = await supabase.from('shortcuts').select('data').eq('id', 'main').single()
-  if (error) return null
-  return data?.data ?? null
+    const { data, error } = await supabase.from('shortcuts').select('data').eq('id', 'main').single()
+    if (error) return null
+    return data?.data ?? null
 }
 
 export async function dbSetShortcuts(sc) {
-  const { error } = await supabase.from('shortcuts').upsert({ id: 'main', data: sc })
-  if (error) console.error('setShortcuts:', error)
+    const { error } = await supabase.from('shortcuts').upsert({ id: 'main', data: sc })
+    if (error) console.error('setShortcuts:', error)
 }
 
 // Trash
 export async function dbGetTrash() {
-  const { data, error } = await supabase.from('trash').select('data').eq('id', 'main').single()
-  if (error) return []
-  return data?.data || []
+    const { data, error } = await supabase.from('trash').select('data').eq('id', 'main').single()
+    if (error) return []
+        return data?.data || []
 }
 
 export async function dbSetTrash(trash) {
-  const { error } = await supabase.from('trash').upsert({ id: 'main', data: trash })
-  if (error) console.error('setTrash:', error)
+    const { error } = await supabase.from('trash').upsert({ id: 'main', data: trash })
+    if (error) console.error('setTrash:', error)
 }
